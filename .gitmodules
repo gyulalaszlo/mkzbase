@@ -1,3 +1,6 @@
 [submodule "optional"]
 	path = optional
 	url = https://github.com/akrzemi1/Optional
+[submodule "variant"]
+	path = variant
+	url = git@github.com:mapbox/variant.git
