@@ -4,3 +4,6 @@
 [submodule "variant"]
 	path = variant
 	url = git@github.com:mapbox/variant.git
+[submodule "murmur3"]
+	path = murmur3
+	url = https://github.com/PeterScott/murmur3.git
