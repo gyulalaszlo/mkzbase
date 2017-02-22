@@ -24,7 +24,7 @@ add_library( mkzbase
         variant/include/mapbox/variant_io.hpp
         variant/include/mapbox/variant_visitor.hpp
         variant/include/mapbox/recursive_wrapper.hpp
-        )
+        index_slice.h)
 
 target_include_directories(mkzbase
         PUBLIC . ./optional ./variant/include)
