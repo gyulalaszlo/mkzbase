@@ -8,6 +8,7 @@
 
 namespace mkz {
 
+
     template <typename T>
     struct index_slice {
 
@@ -19,6 +20,12 @@ namespace mkz {
 
         template <typename U>
         inline index_slice<U> as() const { return {start, count}; }
+
+        template <typename Container>
+        decltype(auto) using_container(Container& c);
+
+        template <typename Container>
+        decltype(auto) using_container(const Container& c) const;
     };
 
 
@@ -122,7 +129,21 @@ namespace mkz {
         return mkz::index_slice_with_container<const T, const Container> { c, s.template as<const T>() };
     }
 
+    // using_container helper
+    // ----------------------
 
+    template <typename T>
+    template <typename Container>
+    decltype(auto) index_slice<T>::using_container(Container& c) {
+        return with_container<typename Container::value_type>( *this, c );
+    }
+
+    template <typename T>
+    template <typename Container>
+    decltype(auto) index_slice<T>::using_container(const Container& c) const {
+        using V = typename Container::value_type;
+        return with_container<V>( this->template as<V>(), c );
+    }
     // APPEND AND ASSOC
     // ================
 
