@@ -96,6 +96,9 @@ namespace mkz {
     };
 
 
+    // CONVERTING TO SLICE
+    // ===================
+
     template <typename T, typename Container>
     mkz::slice<T> to_slice(const index_slice<T>& s, Container& c) {
         return mkz::make_slice(&c[s.start], s.count);
@@ -106,6 +109,9 @@ namespace mkz {
         return mkz::make_slice(&c[s.start], s.count);
     }
 
+    // ASSOCING WITH A CONTAINER
+    // =========================
+
     template <typename T,  typename Container>
     mkz::index_slice_with_container<T, Container> with_container(const index_slice<T> s, Container& c) {
         return mkz::index_slice_with_container< T, Container> { c, s };
@@ -113,9 +119,12 @@ namespace mkz {
 
     template <typename T, typename Container>
     mkz::index_slice_with_container<const T, const Container> with_container(index_slice<T> s, const Container& c) {
-//        return mkz::index_slice_with_container< T, const Container> { c, s };
         return mkz::index_slice_with_container<const T, const Container> { c, s.template as<const T>() };
     }
+
+
+    // APPEND AND ASSOC
+    // ================
 
     template <typename T, typename Container>
     mkz::index_slice_with_container<T, Container> indexed_slice_from_append(Container& c, size_t n) {
@@ -125,7 +134,8 @@ namespace mkz {
     }
 
 
-    // TRANSFORM
+    // APPEND AND ASSOC WITH MAPPING
+    // =============================
 
     // std::transform dereferences the output iterator more then needed, hence this fn
     // (index_slice has been reallocated from under it)
@@ -140,37 +150,12 @@ namespace mkz {
     }
 
 
+
     template <typename T, typename InputIt, typename Container, typename Fn>
     mkz::index_slice_with_container<T, Container> indexed_slice_from_append(InputIt&& beg, InputIt&& end, Container& c, Fn&& fn) {
         auto s = indexed_slice_from_append<T>( c, end - beg );
         transform_( beg, end, s.begin(), fn);
         return s;
-    }
-
-
-    // TREE TO LINEAR ARRAY
-    // ====================
-
-
-
-    template <typename T, typename InputContainer, typename Container, typename State, typename MapFn>
-    mkz::index_slice<T> tree_to_linear_map(
-            const InputContainer& i,
-            Container& o,
-            const State& state,
-            MapFn&& mapFn
-    ) {
-
-        auto recurse = [&](auto&& state, auto&& children) {
-            return tree_to_linear_map<T>(children, o, state, mapFn);
-        };
-
-        auto s = mkz::indexed_slice_from_append<T>( o, i.size() );
-        transform_( i.begin(), i.end(), s.begin(), [&](auto&& e){
-            return mapFn(state, e, recurse);
-        });
-
-        return s.slice();
     }
 
 
