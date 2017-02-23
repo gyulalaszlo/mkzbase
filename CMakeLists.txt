@@ -5,6 +5,16 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 
 add_library( mkzbase
+        murmur3/murmur3.h
+        murmur3/murmur3.c
+
+        optional/optional.hpp
+
+        variant/include/mapbox/variant.hpp
+        variant/include/mapbox/variant_io.hpp
+        variant/include/mapbox/variant_visitor.hpp
+        variant/include/mapbox/recursive_wrapper.hpp
+
         compose.h
         maybe.h
         mkz.h
@@ -13,18 +23,10 @@ add_library( mkzbase
         slice.hpp
         slice_copy.hpp
         variant.h
+        index_slice.h
+        mkz-algorithm.h
 
-        murmur3/murmur3.h
-        murmur3/murmur3.c
-
-
-        optional/optional.hpp
-
-        variant/include/mapbox/variant.hpp
-        variant/include/mapbox/variant_io.hpp
-        variant/include/mapbox/variant_visitor.hpp
-        variant/include/mapbox/recursive_wrapper.hpp
-        index_slice.h)
+        )
 
 target_include_directories(mkzbase
         PUBLIC . ./optional ./variant/include)

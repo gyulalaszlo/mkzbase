@@ -16,6 +16,9 @@ namespace mkz {
 
         inline size_t size() const noexcept { return count; }
         inline size_t end() const noexcept { return start + count; }
+
+        template <typename U>
+        inline index_slice<U> as() const { return {start, count}; }
     };
 
 
@@ -33,10 +36,14 @@ namespace mkz {
         index_slice_iterator() = default;
         explicit index_slice_iterator(Container& c, size_t start) : c(c), index(start) {}
 
+        // Dereferencable.
+        const T& operator*() const {
+            return c[index];
+        }
 
 
         // Dereferencable.
-        reference operator*() const {
+        reference operator*()  {
             return c[index];
         }
 
@@ -53,6 +60,9 @@ namespace mkz {
             return index == rhs.index;
         }
 
+        bool operator!=(const index_slice_iterator& rhs) {
+            return index != rhs.index;
+        }
         Container& c;
         size_t index;
     };
@@ -76,7 +86,13 @@ namespace mkz {
         const_iterator begin() const { return const_iterator(c, s.start); };
         const_iterator end() const { return const_iterator(c, s.end()); };
 
+
+        T& operator[](size_t idx) { return c[s.start + idx]; }
+        const T& operator[](size_t idx) const { return c[s.start + idx]; }
+
         index_slice<T> slice() const { return s; }
+
+        size_t size() const { return s.size(); }
     };
 
 
@@ -90,13 +106,15 @@ namespace mkz {
         return mkz::make_slice(&c[s.start], s.count);
     }
 
-    template <typename T, typename Container>
-    mkz::index_slice_with_container<const T, const Container> with_container(const index_slice<T> s, const Container& c) {
-        return mkz::index_slice_with_container<const T, const Container> { c, s };
-    }
-    template <typename T, typename Container>
+    template <typename T,  typename Container>
     mkz::index_slice_with_container<T, Container> with_container(const index_slice<T> s, Container& c) {
         return mkz::index_slice_with_container< T, Container> { c, s };
+    }
+
+    template <typename T, typename Container>
+    mkz::index_slice_with_container<const T, const Container> with_container(index_slice<T> s, const Container& c) {
+//        return mkz::index_slice_with_container< T, const Container> { c, s };
+        return mkz::index_slice_with_container<const T, const Container> { c, s.template as<const T>() };
     }
 
     template <typename T, typename Container>
